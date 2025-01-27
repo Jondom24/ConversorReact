@@ -19,15 +19,21 @@ function App() {
   function cambiarClave(evento) {
     setClave(evento.target.value)
   }
-
-  function ingresar() {
+// Funcion para ingresar al dar click al boton
+  async function ingresar() {
   console.log('Usuario:', usuario)
   console.log('Clave:', clave)
-  if (usuario === 'admin' && clave === 'admin'){
-  alert("Datos correctos")
-  setLogueado(true)
- } else {
-  alert("Datos incorrectos")
+  try{
+    // Peticion al servidor backend, para verificar si el usuario y la clave son correctos
+  const peticion = await fetch('http://localhost:3000/login?usuario=' + usuario + '&clave=' + clave)
+  if (peticion.ok) {
+    setLogueado(true)
+  } else {
+    alert('Datos incorrectos')
+  }
+
+ } catch (error) {
+   alert('Datos incorectos')
  }
 }
 
@@ -51,19 +57,24 @@ function App() {
     //informacion.results[0][0].transcript
   }
 
-  return (
-  <>
-    {/* Condicion para mostrar en pantalla el contenido */}
-    {logueado ? (<>
-     <h1>Conversor TTS y STT</h1>
-     <h2>Conversior texto a voz</h2>
-     <input type="text" value={texto} onChange={cambiarTexto}/>
-     <button onClick={textoAVoz}>Convertir</button>
-     <h2>Conversor voz a texto</h2>
-     <button onClick={vozATexto}>Grabar</button>
-     {voz}
-     </>) : (
+
+  //Condicion para mostrar en pantalla el contenido
+  if (logueado) {
+    return (
       <>
+        <h1>Conversor TTS y STT</h1>
+        <h2>Conversior texto a voz</h2>
+        <input type="text" value={texto} onChange={cambiarTexto}/>
+        <button onClick={textoAVoz}>Convertir</button>
+        <h2>Conversor voz a texto</h2>
+        <button onClick={vozATexto}>Grabar</button>
+        {voz}
+      </>
+    )
+  }
+
+  return (
+    <>
        <h1>Inicio de sesión</h1>
        <label htmlFor="usuario">Usuario: 
         <input id='usuario' type="text" value={usuario} onChange={cambiarUsuario}/>
@@ -73,8 +84,6 @@ function App() {
        </label>
        <button type="submit" onClick={ingresar}>Ingresar</button>
      </>
-    )}
-   </>
   )
 }
 export default App
