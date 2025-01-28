@@ -2,7 +2,7 @@
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 function App() {
   //hook
@@ -25,7 +25,7 @@ function App() {
   console.log('Clave:', clave)
   try{
     // Peticion al servidor backend, para verificar si el usuario y la clave son correctos
-  const peticion = await fetch('http://localhost:3000/login?usuario=' + usuario + '&clave=' + clave)
+  const peticion = await fetch('http://localhost:3000/login?usuario=' + usuario + '&clave=' + clave, { credentials: 'include' })
   if (peticion.ok) {
     setLogueado(true)
   } else {
@@ -36,6 +36,22 @@ function App() {
    alert('Datos incorectos')
  }
 }
+
+
+function validar() {
+  const validarSesion = async () => {
+    try {
+      // Peticion al servidor backend, para verificar si el usuario y la clave son correctos
+      const peticion = await fetch('http://localhost:3000/validar', { credentials: 'include' })
+      if (peticion.ok) {
+        setLogueado(true)
+      }
+    } catch (error) {
+    }
+  }
+  validarSesion();
+}
+  useEffect(validar, [])
 
   function cambiarTexto(evento) {
     setTexto(evento.target.value)
